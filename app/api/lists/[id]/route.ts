@@ -3,10 +3,10 @@ import { userTable } from '@/drizzle/schema';
 import { db } from '@/drizzle/db';
 import { eq } from 'drizzle-orm';
 
-export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const PATCH = async (request: NextRequest, { params }: { params: { id: string } }) => {
     const userId = params.id;
     console.log('iddd', userId);
-    const requestBody = await req.json();
+    const requestBody = await request.json();
     const newData = requestBody;
     console.log('dataaaa', newData);
     try {
@@ -17,7 +17,7 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
     }
 };
 
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = async (request: NextRequest, { params }: { params: { id: string } }) => {
     const userId = params.id;
     try {
         const result = await db.delete(userTable).where(eq(userTable.id, userId));
@@ -27,7 +27,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
     }
 };
 
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const GET = async (request: NextRequest, { params }: { params: { id: string } }) => {
     const userId = params.id;
 
     if (!userId) {
