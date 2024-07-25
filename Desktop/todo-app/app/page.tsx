@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { TodoList } from '@/components/TodoList';
 import { InputWithButton } from '@/components/ui/InputWithButton';
-import { CiLight } from "react-icons/ci";
+import { ModeToggle } from '@/components/ModeToggle'; // Import the ModeToggle component
 import { VscAccount } from "react-icons/vsc";
 import { AccountNavigation } from '@/components/AccountNavigation';
-import { ModeToggle } from '@/components/ModeToggle';
 
 type Task = {
   id: string;
@@ -18,7 +17,7 @@ export default function Page() {
   const [data, setData] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
-  const [accountNavigation , setaccountNavigation ] = useState(false);
+  const [accountNavigation, setAccountNavigation] = useState(false);
 
   useEffect(() => {
     const handleDisplay = async () => {
@@ -48,27 +47,29 @@ export default function Page() {
   const handleTaskUpdated = (id: string, newTask: string) => {
     setData(prevData => prevData.map(task => (task.id === id ? { ...task, tasks: newTask } : task)));
   };
+
   const toggleMode = () => {
     setDarkMode((mode) => !mode)
-  }
-  const handleAccountNavigation = () => {
-    setaccountNavigation((nav) => !nav);
-  }
+  };
 
+  const handleAccountNavigation = () => {
+    setAccountNavigation((nav) => !nav);
+  }
 
   return (
     <div className={darkMode ? 'bg-black' : 'bg-slate-50'}>
       <div className="flex items-center justify-end p-4">
-        <CiLight className={`text-4xl font-bold text-blue-500  transition-transform transform hover:scale-125 cursor-pointer ${darkMode ? 'text-white' : 'text-blue-500'}`} onClick={toggleMode} />
+        <ModeToggle /> {/* Replace CiLight with ModeToggle */}
         <VscAccount
-        className={`text-3xl font-bold text-blue-500 mx-5 cursor-pointer hover:scale-125 transition-transform transform ${darkMode ? 'text-white' : 'text-blue-500'}`} onClick={handleAccountNavigation}
-      />
+          className={`text-3xl font-bold text-blue-500 mx-5 cursor-pointer hover:scale-125 transition-transform transform ${darkMode ? 'text-white' : 'text-blue-500'}`} 
+          onClick={handleAccountNavigation}
+        />
       </div>
-      {accountNavigation && <AccountNavigation darkMode={darkMode}/>}
+      {accountNavigation && <AccountNavigation darkMode={darkMode} />}
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div>
           <h1 className={`text-center pb-5 font-semibold text-lg ${darkMode ? 'text-white' : 'text-black'}`}>Todo List App</h1>
-          <InputWithButton onTaskAdded={handleTaskAdded} darkMode={darkMode}/>
+          <InputWithButton onTaskAdded={handleTaskAdded} darkMode={darkMode} />
           {loading ? <p>Loading...</p> : <TodoList items={data} onTaskDeleted={handleTaskDeleted} onTaskUpdated={handleTaskUpdated} darkMode={darkMode} />}
         </div>
       </main>
