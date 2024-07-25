@@ -18,7 +18,7 @@ export const PATCH = async(req: NextRequest, {params}: {params: {id: string}}) =
     await db.update(userTable).set(newData).where(eq(userTable.id, userId));
     return NextResponse.json({message: 'successfully updatedData',status: 200})
 }
-export const DELETE = async(res: NextResponse,{params}: {params: {id: string}}) => {
+export const DELETE = async(req: NextRequest,res: NextResponse,{params}: {params: {id: string}}) => {
     const userId = params.id;
     try{
          const result = await db.delete(userTable).where(eq(userTable.id, userId))
