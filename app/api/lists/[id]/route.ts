@@ -1,34 +1,33 @@
-import {NextResponse, NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { userTable } from '@/drizzle/schema';
 import { db } from '@/drizzle/db';
 import { eq } from 'drizzle-orm';
 
-export const PATCH = async(req: NextRequest, {params}: {params: {id: string}}) => {
+export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
     const userId = params.id;
     console.log('iddd', userId);
-    const requestBody = await req.json()
+    const requestBody = await req.json();
     const newData = requestBody;
     console.log('dataaaa', newData);
-    try{
-        await db.update(userTable).set(newData).where(eq(userTable.id, userId))
-        NextResponse.json({message: 'successfully updated', status: 200})
-    } catch(err){
-        NextResponse.json({message: 'Failed to update data', status: 400})
+    try {
+        await db.update(userTable).set(newData).where(eq(userTable.id, userId));
+        return NextResponse.json({ message: 'successfully updated', status: 200 });
+    } catch (err) {
+        return NextResponse.json({ message: 'Failed to update data', status: 400 });
     }
-    await db.update(userTable).set(newData).where(eq(userTable.id, userId));
-    return NextResponse.json({message: 'successfully updatedData',status: 200})
-}
-export const DELETE = async(req: NextRequest,res: NextResponse,{params}: {params: {id: string}}) => {
-    const userId = params.id;
-    try{
-         const result = await db.delete(userTable).where(eq(userTable.id, userId))
-        return NextResponse.json({message: 'successfully deleted', status: 200, data: result})
-    } catch(err){
-        return NextResponse.json({message: 'Failed to delete data', status: 400})
-    }
-}
+};
 
-export const GET = async (request: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+    const userId = params.id;
+    try {
+        const result = await db.delete(userTable).where(eq(userTable.id, userId));
+        return NextResponse.json({ message: 'successfully deleted', status: 200, data: result });
+    } catch (err) {
+        return NextResponse.json({ message: 'Failed to delete data', status: 400 });
+    }
+};
+
+export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
     const userId = params.id;
 
     if (!userId) {
