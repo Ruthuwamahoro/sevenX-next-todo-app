@@ -5,10 +5,8 @@ import { eq } from 'drizzle-orm';
 
 export const PATCH = async (request: NextRequest, { params }: { params: { id: string } }) => {
     const userId = params.id;
-    console.log('iddd', userId);
     const requestBody = await request.json();
     const newData = requestBody;
-    console.log('dataaaa', newData);
     try {
         await db.update(userTable).set(newData).where(eq(userTable.id, userId));
         return NextResponse.json({ message: 'successfully updated', status: 200 });

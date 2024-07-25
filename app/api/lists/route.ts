@@ -14,7 +14,6 @@ export const POST = async (request: NextRequest) => {
         await db.insert(userTable).values({ tasks });
         return NextResponse.json({ message: 'Tasks inserted successfully' }, { status: 201 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 };
@@ -24,7 +23,6 @@ export const GET = async(request:NextRequest) => {
         const responseData =  await db.select().from(userTable)
         return NextResponse.json({status: 200,data: responseData})
     } catch(error){
-        console.log(error)
         NextResponse.json({message: "Error in getting message "})
     }
     

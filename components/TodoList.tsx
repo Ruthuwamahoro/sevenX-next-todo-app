@@ -31,7 +31,7 @@ export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: Todo
       try {
         await axios.delete(`http://localhost:3000/api/lists/${itemToDelete}`);
         console.log('Item successfully deleted');
-        onTaskDeleted(itemToDelete); // Call the callback function
+        onTaskDeleted(itemToDelete);
       } catch (error) {
         console.error('Error deleting item:', error);
       } finally {
