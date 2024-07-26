@@ -14,7 +14,7 @@ export function InputWithButton({ onTaskAdded , darkMode}: InputWithButtonProps)
     if (!task.trim()) return;
 
     try {
-      const response = await axios.post('http://localhost:3000/api/lists', { tasks: task });
+      const response = await axios.post('/api/lists', { tasks: task });
       const newTask = response.data.data;
       onTaskAdded(newTask);
       setTask('');

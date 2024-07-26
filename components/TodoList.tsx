@@ -29,7 +29,7 @@ export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: Todo
   const confirmDelete = async () => {
     if (itemToDelete) {
       try {
-        await axios.delete(`http://localhost:3000/api/lists/${itemToDelete}`);
+        await axios.delete(`/api/lists/${itemToDelete}`);
         console.log('Item successfully deleted');
         onTaskDeleted(itemToDelete);
       } catch (error) {
@@ -54,7 +54,7 @@ export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: Todo
   const handleUpdate = async () => {
     if (editingItemId && newTask.trim() !== '') {
       try {
-        await axios.patch(`http://localhost:3000/api/lists/${editingItemId}`, { tasks: newTask });
+        await axios.patch(`/api/lists/${editingItemId}`, { tasks: newTask });
         console.log('Item successfully updated');
         onTaskUpdated(editingItemId, newTask);
       } catch (error) {

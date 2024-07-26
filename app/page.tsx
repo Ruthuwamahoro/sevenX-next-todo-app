@@ -23,7 +23,7 @@ export default function Page() {
     const handleDisplay = async () => {
       setLoading(true);
       try {
-        const response = await axios.get<{ data: Task[] }>('http://localhost:3000/api/lists');
+        const response = await axios.get<{ data: Task[] }>('/api/lists');
         setData(response.data.data);
         console.log('Fetched data:', response.data.data);
       } catch (error) {
