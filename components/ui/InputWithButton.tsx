@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button';
 
 interface InputWithButtonProps {
   onTaskAdded: (newTask: { id: string; tasks: string }) => void;
-  darkMode: boolean
 }
 
-export function InputWithButton({ onTaskAdded , darkMode}: InputWithButtonProps) {
+export function InputWithButton({ onTaskAdded}: InputWithButtonProps) {
   const [task, setTask] = useState('');
 
   const handleAddTask = async () => {
@@ -19,20 +18,21 @@ export function InputWithButton({ onTaskAdded , darkMode}: InputWithButtonProps)
       onTaskAdded(newTask);
       setTask('');
     } catch (error) {
-      console.error('Error adding task:', error);
+      return error
     }
   };
 
   return (
-    <div className={`flex w-full max-w-sm items-center space-x-2 ${darkMode ? 'bg-slate-600 text-white' : ''}`}>
-      <input
+    <div className="flex w-full max-w-sm items-center space-x-2 pb-5">
+     <input
         type="text"
         value={task}
         onChange={(e) => setTask(e.target.value)}
-        className={`border p-2 ${darkMode ? 'bg-slate-600 text-white border-slate-600' : ''}`}
+        className="flex-1 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         placeholder="Enter a task"
       />
-      <Button onClick={handleAddTask} className={darkMode ? 'border-y-indigo-400 text-white' : ''}>Add Task</Button>
+      <Button type="submit" onClick={handleAddTask}>Add Task</Button>
     </div>
-  );
+  )
 }
+

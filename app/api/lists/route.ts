@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { userTable } from "@/drizzle/schema";
+import { taskTable } from "@/drizzle/schema";
 import { db } from '@/drizzle/db';
+import { auth } from "@/auth";
+import { and, eq } from 'drizzle-orm';
 
 export const POST = async (request: NextRequest) => {
     const requestBody = await request.json();
@@ -11,19 +13,31 @@ export const POST = async (request: NextRequest) => {
     }
 
     try {
-        await db.insert(userTable).values({ tasks });
+        const session = await auth();
+        if (!session || !session.user || !session.user.id) {
+            return NextResponse.json({ message: 'User not authenticated' }, { status: 401 });
+        }
+
+        const userId = session.user.id;
+        await db.insert(taskTable).values({ tasks, userId });
         return NextResponse.json({ message: 'Tasks inserted successfully' }, { status: 201 });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 };
 
-export const GET = async(request:NextRequest) => {
-    try{
-        const responseData =  await db.select().from(userTable)
-        return NextResponse.json({status: 200,data: responseData})
-    } catch(error){
-        NextResponse.json({message: "Error in getting message "})
+export const GET = async (request: NextRequest) => {
+    const session = await auth();
+    if (!session) {
+        return NextResponse.redirect('/api/auth/signin');
     }
-    
-}
+    const userId = session.user.id;
+
+    try {
+        const result = await db.select().from(taskTable).where(eq(taskTable.userId, userId));
+        return NextResponse.json({ status: 200, data: result });
+    } catch (err) {
+        return NextResponse.json({ message: 'Internal Server Error', status: 500 });
+    }
+};

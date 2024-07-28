@@ -12,14 +12,17 @@ interface TodoListProps {
   items: TodoItem[];
   onTaskDeleted: (id: string) => void;
   onTaskUpdated: (id: string, newTask: string) => void;
-  darkMode: boolean
 }
 
-export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: TodoListProps) {
+export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListProps) {
+  const [todoItems, setTodoItems] = useState<TodoItem[]>(items);
   const [showAlert, setShowAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [newTask, setNewTask] = useState('');
+  useState(() => {
+    setTodoItems(items);
+  }, );
 
   const handleDelete = (id: string) => {
     setItemToDelete(id);
@@ -31,6 +34,7 @@ export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: Todo
       try {
         await axios.delete(`/api/lists/${itemToDelete}`);
         console.log('Item successfully deleted');
+        setTodoItems((prevItems) => prevItems.filter((item) => item.id !== itemToDelete));
         onTaskDeleted(itemToDelete);
       } catch (error) {
         console.error('Error deleting item:', error);
@@ -56,6 +60,11 @@ export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: Todo
       try {
         await axios.patch(`/api/lists/${editingItemId}`, { tasks: newTask });
         console.log('Item successfully updated');
+        setTodoItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === editingItemId ? { ...item, tasks: newTask } : item
+          )
+        );
         onTaskUpdated(editingItemId, newTask);
       } catch (error) {
         console.error('Error updating item:', error);
@@ -67,21 +76,18 @@ export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: Todo
   };
 
   return (
-    <div className={`w-full max-w-lg mx-auto p-4 bg-white shadow-md rounded-lg pt-5 ${darkMode ? 'bg-slate-700 text-white' : ''}`}>
+    <div className="w-full max-w-lg mx-auto p-4 shadow-md rounded-lg pt-5">
       {showAlert && itemToDelete && (
-        <Alert
-          onConfirm={confirmDelete}
-          onCancel={cancelDelete}
-        />
+        <Alert onConfirm={confirmDelete} onCancel={cancelDelete} />
       )}
       <div className="max-h-80 overflow-auto">
-        {items.length === 0 ? (
-          <p className="text-gray-500 text-center">No items in the list</p>
+        {todoItems.length === 0 ? (
+          <p className="text-center">No items in the list</p>
         ) : (
-          items.map((item) => (
+          todoItems.map((item) => (
             <div
               key={item.id}
-              className={`flex items-center justify-between p-3 mb-2 bg-gray-100 rounded-lg shadow-sm ${ darkMode ? 'bg-slate-500 text-white' : ''}`}
+              className="flex items-center justify-between p-5 mb-2 rounded-lg shadow-lg bg-opacity-100"
             >
               {editingItemId === item.id ? (
                 <>
@@ -91,13 +97,13 @@ export function TodoList({ items, onTaskDeleted, onTaskUpdated, darkMode }: Todo
                     onChange={(e) => setNewTask(e.target.value)}
                     className="border p-2 flex-grow mr-2"
                   />
-                  <Button onClick={handleUpdate} className="bg-green-500 text-white">Save</Button>
+                  <Button onClick={handleUpdate}>Save</Button>
                 </>
               ) : (
                 <>
-                  <p className={`text-gray-800 ${darkMode ? 'text-white' : ''}`}>{item.tasks}</p>
+                  <p className={`${item.tasks.length > 5 ? 'whitespace-nowrap': ''}`}>{item.tasks}</p>
                   <div className="flex space-x-2">
-                    <Button onClick={() => handleEdit(item.id, item.tasks)} className="bg-purple-500 text-white">Edit</Button>
+                    <Button onClick={() => handleEdit(item.id, item.tasks)}>Edit</Button>
                     <Button onClick={() => handleDelete(item.id)} className="border-b-indigo-300">Delete</Button>
                   </div>
                 </>

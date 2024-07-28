@@ -1,23 +1,24 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { TodoList } from '@/components/TodoList';
 import { InputWithButton } from '@/components/ui/InputWithButton';
-import { CiLight } from "react-icons/ci";
-import { VscAccount } from "react-icons/vsc";
-import { AccountNavigation } from '@/components/AccountNavigation';
 
-type Task = {
+interface Task {
   id: string;
   tasks: string;
-};
+}
+
+interface User {
+  name: string;
+  image: string;
+  email: string;
+}
 
 export default function Page() {
   const [data, setData] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [accountNavigation , setaccountNavigation ] = useState(false);
 
   useEffect(() => {
     const handleDisplay = async () => {
@@ -25,9 +26,8 @@ export default function Page() {
       try {
         const response = await axios.get<{ data: Task[] }>('/api/lists');
         setData(response.data.data);
-        console.log('Fetched data:', response.data.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -36,39 +36,29 @@ export default function Page() {
     handleDisplay();
   }, []);
 
-  const handleTaskAdded = (newTask: Task) => {
-    setData(prevData => [...prevData, newTask]);
+  const handleTaskPost = (newTask: Task) => {
+    setData((prevData) => [...prevData, newTask]);
   };
 
   const handleTaskDeleted = (id: string) => {
-    setData(prevData => prevData.filter(task => task.id !== id));
+    setData((prevData) => prevData.filter((task) => task.id !== id));
   };
 
   const handleTaskUpdated = (id: string, newTask: string) => {
-    setData(prevData => prevData.map(task => (task.id === id ? { ...task, tasks: newTask } : task)));
+    setData((prevData) =>
+      prevData.map((task) => (task.id === id ? { ...task, tasks: newTask } : task))
+    );
   };
-  const toggleMode = () => {
-    setDarkMode((mode) => !mode)
-  }
-  const handleAccountNavigation = () => {
-    setaccountNavigation((nav) => !nav);
-  }
-
 
   return (
-    <div className={darkMode ? 'bg-black' : 'bg-slate-50'}>
-      <div className="flex items-center justify-end p-4">
-        <CiLight className={`text-4xl font-bold text-blue-500  transition-transform transform hover:scale-125 cursor-pointer ${darkMode ? 'text-white' : 'text-blue-500'}`} onClick={toggleMode} />
-        <VscAccount
-        className={`text-3xl font-bold text-blue-500 mx-5 cursor-pointer hover:scale-125 transition-transform transform ${darkMode ? 'text-white' : 'text-blue-500'}`} onClick={handleAccountNavigation}
-      />
-      </div>
-      {accountNavigation && <AccountNavigation darkMode={darkMode}/>}
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <div>
+      <main className="flex items-center justify-center p-24 min-h-screen">
         <div>
-          <h1 className={`text-center pb-5 font-semibold text-lg ${darkMode ? 'text-white' : 'text-black'}`}>Todo List App</h1>
-          <InputWithButton onTaskAdded={handleTaskAdded} darkMode={darkMode}/>
-          {loading ? <p>Loading...</p> : <TodoList items={data} onTaskDeleted={handleTaskDeleted} onTaskUpdated={handleTaskUpdated} darkMode={darkMode} />}
+          <h1 className="text-center pb-5 font-semibold text-lg">Todo List App</h1>
+          <div className='bg-white-50 p-5 rounded-lg shadow-inner overflow-y-auto'>
+            <InputWithButton onTaskAdded={handleTaskPost} />
+            {loading ? <p className='spinner'>Loading...</p> : <TodoList items={data} onTaskDeleted={handleTaskDeleted} onTaskUpdated={handleTaskUpdated} />}
+          </div>
         </div>
       </main>
     </div>
