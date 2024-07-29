@@ -1,28 +1,30 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/alert';
+import { Alert } from '@/components/Alert';
+import { deleteTask } from '@/utils/controller';
+
 
 interface TodoItem {
   id: string;
   tasks: string;
 }
 
-interface TodoListProps {
+interface TodoProps {
   items: TodoItem[];
-  onTaskDeleted: (id: string) => void;
-  onTaskUpdated: (id: string, newTask: string) => void;
+  DeleteTask: (id: string) => void;
+  updateTask: (id: string, newTask: string) => void;
 }
 
-export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListProps) {
+export function TodoList({ items = [], DeleteTask, updateTask }: TodoProps) {
   const [todoItems, setTodoItems] = useState<TodoItem[]>(items);
   const [showAlert, setShowAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [newTask, setNewTask] = useState('');
-  useState(() => {
+
+  useEffect(() => {
     setTodoItems(items);
-  }, );
+  }, [items]);
 
   const handleDelete = (id: string) => {
     setItemToDelete(id);
@@ -32,12 +34,11 @@ export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListP
   const confirmDelete = async () => {
     if (itemToDelete) {
       try {
-        await axios.delete(`/api/lists/${itemToDelete}`);
-        console.log('Item successfully deleted');
+        await deleteTask(itemToDelete);
         setTodoItems((prevItems) => prevItems.filter((item) => item.id !== itemToDelete));
-        onTaskDeleted(itemToDelete);
+        DeleteTask(itemToDelete);
       } catch (error) {
-        console.error('Error deleting item:', error);
+        console.error(error);
       } finally {
         setShowAlert(false);
         setItemToDelete(null);
@@ -58,16 +59,15 @@ export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListP
   const handleUpdate = async () => {
     if (editingItemId && newTask.trim() !== '') {
       try {
-        await axios.patch(`/api/lists/${editingItemId}`, { tasks: newTask });
-        console.log('Item successfully updated');
+        await updateTask(editingItemId, newTask);
         setTodoItems((prevItems) =>
           prevItems.map((item) =>
             item.id === editingItemId ? { ...item, tasks: newTask } : item
           )
         );
-        onTaskUpdated(editingItemId, newTask);
+        updateTask(editingItemId, newTask);
       } catch (error) {
-        console.error('Error updating item:', error);
+        console.error(error);
       } finally {
         setEditingItemId(null);
         setNewTask('');
@@ -78,7 +78,7 @@ export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListP
   return (
     <div className="w-full max-w-lg mx-auto p-4 shadow-md rounded-lg pt-5">
       {showAlert && itemToDelete && (
-        <Alert onConfirm={confirmDelete} onCancel={cancelDelete} />
+        <Alert Confirm={confirmDelete} Cancel={cancelDelete} />
       )}
       <div className="max-h-80 overflow-auto">
         {todoItems.length === 0 ? (

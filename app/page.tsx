@@ -20,24 +20,26 @@ export default function Page() {
   const [data, setData] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleDisplay = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get<{ data: Task[] }>('/api/lists');
+      setData(response.data.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const handleDisplay = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get<{ data: Task[] }>('/api/lists');
-        setData(response.data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     handleDisplay();
   }, []);
 
   const handleTaskPost = (newTask: Task) => {
-    setData((prevData) => [...prevData, newTask]);
+    setData((prevData) => 
+      [...prevData, newTask]);
+    handleDisplay()
+
   };
 
   const handleTaskDeleted = (id: string) => {
@@ -56,8 +58,8 @@ export default function Page() {
         <div>
           <h1 className="text-center pb-5 font-semibold text-lg">Todo List App</h1>
           <div className='bg-white-50 p-5 rounded-lg shadow-inner overflow-y-auto'>
-            <InputWithButton onTaskAdded={handleTaskPost} />
-            {loading ? <p className='spinner'>Loading...</p> : <TodoList items={data} onTaskDeleted={handleTaskDeleted} onTaskUpdated={handleTaskUpdated} />}
+            <InputWithButton TaskAdded={handleTaskPost} />
+            {loading ? <p>Loading...</p> : <TodoList items={data} DeleteTask={handleTaskDeleted} updateTask={handleTaskUpdated} />}
           </div>
         </div>
       </main>
