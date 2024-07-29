@@ -25,7 +25,6 @@ export default function Page() {
   }, []);
 
   const handleTaskPost = (newTask: TodoItem) => {
-    console.log('new added task', newTask)
     const updatedData:TodoItem[]  = data == null? [newTask] : [...data, newTask];
     setData(updatedData);
   };

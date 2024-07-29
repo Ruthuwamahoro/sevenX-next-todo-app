@@ -12,7 +12,6 @@ const Profile = () => {
     const fetchUser = async () => {
       try {
         const userData = await getUserSession();
-        console.log('dataaa', userData.name);
         setUser(userData);
       } catch (err) {
         setError('Failed to fetch user data');
