@@ -8,12 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface AlertProps {
-  onConfirm: () => void;
-  onCancel: () => void;
+interface Alert {
+  Confirm: () => void;
+  Cancel: () => void;
 }
 
-export function Alert({ onConfirm, onCancel }: AlertProps) {
+export function Alert({ Confirm, Cancel }: Alert) {
   return (
     <Card className="w-[350px] fixed top-4 right-4">
       <CardHeader>
@@ -21,10 +21,10 @@ export function Alert({ onConfirm, onCancel }: AlertProps) {
         <CardDescription>Are you sure you want to delete this item?</CardDescription>
       </CardHeader>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={Cancel}>
           Cancel
         </Button>
-        <Button onClick={onConfirm}>Delete</Button>
+        <Button onClick={Confirm}>Delete</Button>
       </CardFooter>
     </Card>
   );

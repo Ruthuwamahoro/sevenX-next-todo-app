@@ -1,7 +1,3 @@
-
-
-
-
 import {
     boolean,
     timestamp,
@@ -13,7 +9,6 @@ import {
   import postgres from "postgres"
   import { drizzle } from "drizzle-orm/postgres-js"
   import type { AdapterAccountType } from "next-auth/adapters"
-  import { auth } from "@/auth"
    
   const connectionString = "postgres://postgres:postgres@localhost:5432/drizzle"
   const pool = postgres(connectionString, { max: 1 })

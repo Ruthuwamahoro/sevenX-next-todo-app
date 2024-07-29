@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { auth } from '@/auth';
 import { NavBar } from '@/components/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -29,16 +30,19 @@ export default async function RootLayout({
     image: session?.user?.image || '',
     email: session?.user?.email || ''
   };
+  const queryClient = new QueryClient({});
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn('min-h-screen font-sans antialiased', fontSans.variable)}>
-        <SessionProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <NavBar user={user}/>
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+          <SessionProvider>
+            {/* <QueryClientProvider client={queryClient}> */}
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                <NavBar user={user}/>
+                {children}
+              </ThemeProvider>
+            {/* </QueryClientProvider> */}
+          </SessionProvider>
       </body>
     </html>
   );

@@ -1,28 +1,25 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/alert';
+import { Alert } from '@/components/Alert';
+import { deleteTask } from '@/utils/controller';
 
-interface TodoItem {
+
+export interface TodoItem {
   id: string;
   tasks: string;
 }
 
-interface TodoListProps {
-  items: TodoItem[];
-  onTaskDeleted: (id: string) => void;
-  onTaskUpdated: (id: string, newTask: string) => void;
+interface TodoProps {
+  items: TodoItem[] | null;
+  DeleteTask: (id: string) => void;
+  updateTask: (id: string, newTask: string) => void;
 }
 
-export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListProps) {
-  const [todoItems, setTodoItems] = useState<TodoItem[]>(items);
+export function TodoList({ items = [], DeleteTask, updateTask }: TodoProps) {
   const [showAlert, setShowAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [newTask, setNewTask] = useState('');
-  useState(() => {
-    setTodoItems(items);
-  }, );
 
   const handleDelete = (id: string) => {
     setItemToDelete(id);
@@ -32,12 +29,10 @@ export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListP
   const confirmDelete = async () => {
     if (itemToDelete) {
       try {
-        await axios.delete(`/api/lists/${itemToDelete}`);
-        console.log('Item successfully deleted');
-        setTodoItems((prevItems) => prevItems.filter((item) => item.id !== itemToDelete));
-        onTaskDeleted(itemToDelete);
+        await deleteTask(itemToDelete);
+        DeleteTask(itemToDelete);
       } catch (error) {
-        console.error('Error deleting item:', error);
+        console.error(error);
       } finally {
         setShowAlert(false);
         setItemToDelete(null);
@@ -58,16 +53,10 @@ export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListP
   const handleUpdate = async () => {
     if (editingItemId && newTask.trim() !== '') {
       try {
-        await axios.patch(`/api/lists/${editingItemId}`, { tasks: newTask });
-        console.log('Item successfully updated');
-        setTodoItems((prevItems) =>
-          prevItems.map((item) =>
-            item.id === editingItemId ? { ...item, tasks: newTask } : item
-          )
-        );
-        onTaskUpdated(editingItemId, newTask);
+        await updateTask(editingItemId, newTask);
+        updateTask(editingItemId, newTask);
       } catch (error) {
-        console.error('Error updating item:', error);
+        console.error(error);
       } finally {
         setEditingItemId(null);
         setNewTask('');
@@ -75,21 +64,22 @@ export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListP
     }
   };
 
+
   return (
     <div className="w-full max-w-lg mx-auto p-4 shadow-md rounded-lg pt-5">
       {showAlert && itemToDelete && (
-        <Alert onConfirm={confirmDelete} onCancel={cancelDelete} />
+        <Alert Confirm={confirmDelete} Cancel={cancelDelete} />
       )}
       <div className="max-h-80 overflow-auto">
-        {todoItems.length === 0 ? (
+        {items?.length === 0 ? (
           <p className="text-center">No items in the list</p>
         ) : (
-          todoItems.map((item) => (
+          items?.map((item) => (
             <div
               key={item.id}
               className="flex items-center justify-between p-5 mb-2 rounded-lg shadow-lg bg-opacity-100"
             >
-              {editingItemId === item.id ? (
+              {editingItemId === item?.id ? (
                 <>
                   <input
                     type="text"
@@ -101,7 +91,7 @@ export function TodoList({ items = [], onTaskDeleted, onTaskUpdated }: TodoListP
                 </>
               ) : (
                 <>
-                  <p className={`${item.tasks.length > 5 ? 'whitespace-nowrap': ''}`}>{item.tasks}</p>
+                  <p>{item.tasks}</p>
                   <div className="flex space-x-2">
                     <Button onClick={() => handleEdit(item.id, item.tasks)}>Edit</Button>
                     <Button onClick={() => handleDelete(item.id)} className="border-b-indigo-300">Delete</Button>

@@ -2,52 +2,44 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TodoList } from '@/components/TodoList';
+import { TodoItem, TodoList } from '@/components/TodoList';
 import { InputWithButton } from '@/components/ui/InputWithButton';
 
-interface Task {
-  id: string;
-  tasks: string;
-}
-
-interface User {
-  name: string;
-  image: string;
-  email: string;
-}
-
 export default function Page() {
-  const [data, setData] = useState<Task[]>([]);
+  const [data, setData] = useState<TodoItem[] | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const handleDisplay = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get<{ data: TodoItem[] }>('/api/lists');
+      setData(response.data.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const handleDisplay = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get<{ data: Task[] }>('/api/lists');
-        setData(response.data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     handleDisplay();
   }, []);
 
-  const handleTaskPost = (newTask: Task) => {
-    setData((prevData) => [...prevData, newTask]);
+  const handleTaskPost = (newTask: TodoItem) => {
+    console.log('new added task', newTask)
+    const updatedData:TodoItem[]  = data == null? [newTask] : [...data, newTask];
+    setData(updatedData);
   };
 
   const handleTaskDeleted = (id: string) => {
-    setData((prevData) => prevData.filter((task) => task.id !== id));
+    if(data == null) return;
+    const updatedData:TodoItem[]  =  data.filter((task) => task.id !== id);
+    setData(updatedData);
   };
 
   const handleTaskUpdated = (id: string, newTask: string) => {
-    setData((prevData) =>
-      prevData.map((task) => (task.id === id ? { ...task, tasks: newTask } : task))
-    );
+    if(data == null) return;
+    const updatedData:TodoItem[]  =  data.map((task) => (task.id === id ? { ...task, tasks: newTask } : task))
+    setData(updatedData);
   };
 
   return (
@@ -56,8 +48,8 @@ export default function Page() {
         <div>
           <h1 className="text-center pb-5 font-semibold text-lg">Todo List App</h1>
           <div className='bg-white-50 p-5 rounded-lg shadow-inner overflow-y-auto'>
-            <InputWithButton onTaskAdded={handleTaskPost} />
-            {loading ? <p className='spinner'>Loading...</p> : <TodoList items={data} onTaskDeleted={handleTaskDeleted} onTaskUpdated={handleTaskUpdated} />}
+            <InputWithButton TaskAdded={handleTaskPost} />
+            {loading && data === null ? <p>Loading...</p> : data !==null && <TodoList items={data} DeleteTask={handleTaskDeleted} updateTask={handleTaskUpdated} />}
           </div>
         </div>
       </main>

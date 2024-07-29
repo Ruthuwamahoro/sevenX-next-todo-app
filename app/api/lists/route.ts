@@ -19,8 +19,9 @@ export const POST = async (request: NextRequest) => {
         }
 
         const userId = session.user.id;
-        await db.insert(taskTable).values({ tasks, userId });
-        return NextResponse.json({ message: 'Tasks inserted successfully' }, { status: 201 });
+        const result = await db.insert(taskTable).values({ tasks, userId }).returning();
+        console.log('result result', result)
+        return NextResponse.json({ message: 'Tasks inserted successfully', data: result }, { status: 201 });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

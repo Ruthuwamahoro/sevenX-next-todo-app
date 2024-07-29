@@ -3,10 +3,10 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 
 interface InputWithButtonProps {
-  onTaskAdded: (newTask: { id: string; tasks: string }) => void;
+  TaskAdded: (newTask: { id: string; tasks: string }) => void;
 }
 
-export function InputWithButton({ onTaskAdded}: InputWithButtonProps) {
+export function InputWithButton({ TaskAdded}: InputWithButtonProps) {
   const [task, setTask] = useState('');
 
   const handleAddTask = async () => {
@@ -14,8 +14,8 @@ export function InputWithButton({ onTaskAdded}: InputWithButtonProps) {
 
     try {
       const response = await axios.post('/api/lists', { tasks: task });
-      const newTask = response.data.data;
-      onTaskAdded(newTask);
+      const newTask = response.data.data[0];
+      TaskAdded(newTask);
       setTask('');
     } catch (error) {
       return error
