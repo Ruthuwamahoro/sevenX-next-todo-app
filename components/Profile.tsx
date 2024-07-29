@@ -12,10 +12,9 @@ const Profile = () => {
     const fetchUser = async () => {
       try {
         const userData = await getUserSession();
-        console.log('dataaa', userData.name);
         setUser(userData);
       } catch (err) {
-        setError('Failed to fetch user data');
+        setError('Failed to fetch');
       } finally {
         setLoading(false);
       }
@@ -33,7 +32,7 @@ const Profile = () => {
       <h1>{user.name}</h1>
       <Image 
         src={user.image} 
-        alt="User Image" 
+        alt="My Image" 
         width={75} 
         height={75} 
         style={{ borderRadius: '50%' }} 

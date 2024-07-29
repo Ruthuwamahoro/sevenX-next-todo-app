@@ -1,37 +1,45 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {  postTask } from '@/utils/controller';
 
-interface InputWithButtonProps {
-  TaskAdded: (newTask: { id: string; tasks: string }) => void;
-}
+export function InputWithButton() {
+  const [formData, setFormData] = useState({
+    tasks:"",
+  });
+  const queryClient = useQueryClient();
 
-export function InputWithButton({ TaskAdded}: InputWithButtonProps) {
-  const [task, setTask] = useState('');
 
-  const handleAddTask = async () => {
-    if (!task.trim()) return;
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    setFormData({...formData, [e.target.name]: e.target.value});
+  }
 
-    try {
-      const response = await axios.post('/api/lists', { tasks: task });
-      const newTask = response.data.data[0];
-      TaskAdded(newTask);
-      setTask('');
-    } catch (error) {
-      return error
+  const postMutation = useMutation({
+    mutationFn:postTask,
+    onSuccess: () => {
+       queryClient.invalidateQueries({queryKey: ['todos']});
+
     }
-  };
+  })
 
   return (
     <div className="flex w-full max-w-sm items-center space-x-2 pb-5">
      <input
         type="text"
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
+        name='tasks'
+        value={formData.tasks}
+        onChange={handleChange}
         className="flex-1 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         placeholder="Enter a task"
       />
-      <Button type="submit" onClick={handleAddTask}>Add Task</Button>
+      <Button type="submit" onClick={() =>
+      {
+        postMutation.mutate(formData)
+      }
+        
+      }>
+        {postMutation.isPending?"Adding..":"Add Task"}
+        </Button>
     </div>
   )
 }
