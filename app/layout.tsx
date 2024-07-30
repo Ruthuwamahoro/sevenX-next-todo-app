@@ -1,13 +1,11 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Inter as FontSans } from 'next/font/google';
-import { QueryClient,QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from '@/accountProvider/sessionProvider';
 import { cn } from '@/lib/utils';
 import { auth } from '@/auth';
 import { NavBar } from '@/components/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { useState } from 'react';
 import Providers from '@/utils/queryProvider';
 
 const fontSans = FontSans({
@@ -32,7 +30,6 @@ export default async function RootLayout({
     image: session?.user?.image || '',
     email: session?.user?.email || ''
   };
-  const client = new QueryClient()
   return (
     <html lang="en">
       <body className={cn('min-h-screen font-sans antialiased', fontSans.variable)}>

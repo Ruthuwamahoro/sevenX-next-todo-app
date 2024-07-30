@@ -1,41 +1,11 @@
 'use client';
 
 import { InputWithButton } from '@/components/ui/InputWithButton';
-import { TodoItem, TodoList } from '@/components/TodoList';
-// import { postTask, deleteTask, updateTask } from '@/utils/controller';
+import { TodoList } from '@/components/TodoList';
 import { useGetTodos } from '@/hooks/getTodos';
-// import { useQueryClient } from '@tanstack/react-query';
 
 export default function Page() {
   const { data, isLoading, error } = useGetTodos();
-  // const queryClient = useQueryClient();
-
-  // const handleTaskPost = async (newTask: TodoItem) => {
-  //   try {
-  //     await postTask(newTask);
-  //     queryClient.invalidateQueries({ queryKey: ['todos'] });
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // };
-
-  // const handleTaskDeleted = async (id: string) => {
-  //   try {
-  //     await deleteTask(id);
-  //     queryClient.invalidateQueries({ queryKey: ['todos'] });
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // };
-
-  // const handleTaskUpdated = async (id: string, newTask: string) => {
-  //   try {
-  //     await updateTask(id, newTask);
-  //     queryClient.invalidateQueries({ queryKey: ['todos'] });
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // };
 
   return (
     <div>
