@@ -2,9 +2,9 @@ import * as React from "react";
 
 export function AboutUs() {
   return (
-    <section className="my-16 px-6 md:px-0 max-w-5xl mx-auto">
+    <section data-aos="fade-left" className="my-16 px-6 md:px-0 w-full mx-auto">
       {/* Section with a gradient background */}
-      <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-400 rounded-lg py-12 px-6 text-white animate-fadeInSlow">
+      <div className="bg-gradient-to-r from-purple-900 bg-gray-900 rounded-lg py-12 px-6 text-white animate-fadeInSlow">
         <h2 className="text-5xl font-bold mb-8 text-center tracking-wide animate-slideInDown">
           Our Mission to Help
         </h2>
@@ -52,7 +52,7 @@ export function AboutUs() {
 
       {/* Call to Action with hover effects */}
       <div className="mt-16 text-center">
-        <a href="/support-us" className="px-10 py-4 bg-gradient-to-r from-blue-500 to-teal-400 text-white text-xl font-semibold rounded-lg transition duration-300 ease-in-out transform hover:scale-110 hover:from-blue-600 hover:to-teal-500">
+        <a href="/support-us" className="px-10 py-4 bg-pink-500 text-white text-xl font-semibold rounded-2xl transition duration-300 ease-in-out transform hover:scale-110 hover:from-blue-600 hover:to-teal-500">
           Get Involved
         </a>
       </div>

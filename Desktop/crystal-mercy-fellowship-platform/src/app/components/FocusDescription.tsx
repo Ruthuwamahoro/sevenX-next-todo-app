@@ -2,7 +2,7 @@ import { ResizableDemo } from "./FocusCard";
 
 export const FocusDescription = () => {
     return (
-        <div>
+        <div className="">
             <p className="py-14 text-2xl text-center font-extrabold">
                 <span>-</span><span className="text-black">OUR FOCUS</span><span>-</span>
             </p>

@@ -1,62 +1,84 @@
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { useState, useEffect } from "react";
+import { GoDot } from "react-icons/go";
 import Image from "next/image";
 
+const testimonials = [
+  { name: "John Doe", image: "https://i.pinimg.com/564x/62/98/d3/6298d39b50429bfc626e68fad02d9b12.jpg", quote: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, ad, amet voluptas praesentium suscipit debitis voluptatibus, iure eveniet cupiditate aperiam!" },
+  { name: "Jane Smith", image: "https://i.pinimg.com/564x/62/98/d3/6298d39b50429bfc626e68fad02d9b12.jpg", quote: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, ad, amet voluptas praesentium suscipit debitis voluptatibus, iure eveniet cupiditate aperiam!" },
+  { name: "Alice Brown", image: "https://i.pinimg.com/564x/62/98/d3/6298d39b50429bfc626e68fad02d9b12.jpg", quote: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, ad, amet voluptas praesentium suscipit debitis voluptatibus, iure eveniet cupiditate aperiam!" },
+  { name: "Bob Johnson", image: "https://i.pinimg.com/564x/62/98/d3/6298d39b50429bfc626e68fad02d9b12.jpg", quote: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, ad, amet voluptas praesentium suscipit debitis voluptatibus, iure eveniet cupiditate aperiam!" },
+  { name: "Charlie Lee", image: "https://i.pinimg.com/564x/62/98/d3/6298d39b50429bfc626e68fad02d9b12.jpg", quote: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, ad, amet voluptas praesentium suscipit debitis voluptatibus, iure eveniet cupiditate aperiam!" },
+  { name: "Diana White", image: "https://i.pinimg.com/564x/62/98/d3/6298d39b50429bfc626e68fad02d9b12.jpg", quote: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, ad, amet voluptas praesentium suscipit debitis voluptatibus, iure eveniet cupiditate aperiam!" }
+];
+
 export function Testimonials() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % 3); // Adjust for continuous animation
+    }, 5000); // Move to the next set every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
+
+  const getVisibleTestimonials = () => {
+    const start = currentSlide * 2;
+    return testimonials.slice(start % testimonials.length, start % testimonials.length + 2); // Cycle back after the last testimonials
+  };
+
   return (
-    <div className="w-full flex justify-center items-center">
-      <Carousel
-        opts={{
-          align: "center",
-        }}
-        className="w-full max-w-full"
-      >
-        <CarouselContent className="relative w-full h-[400px]">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem key={index} className="w-full h-full">
-              <div className="flex justify-evenly items-center gap-4 p-4 animate__animated animate__slideInRight transition-transform duration-1000">
-                {/* Left Image as a Circle */}
-                <div className="flex-shrink-0">
-                  <div className="relative w-40 h-40 overflow-hidden rounded-full border-4 border-accent shadow-md">
-                    <Image
-                      src="https://i.pinimg.com/564x/10/8d/60/108d60e32e0375c2a03cf7278dc42c8c.jpg"
-                      alt="Testimonial"
-                      layout="fill"
-                      objectFit="cover"
-                      className="object-cover object-center"
-                    />
-                  </div>
-                </div>
-                {/* Right Side Text */}
-                <div className="pl-6">
-                  <Card className=" shadow-none  w-[900px] border-none">
-                    <CardContent className="p-8">
-                      <h3 className="text-2xl font-semibold mb-4">
-                        Testimonial {index + 1}
-                      </h3>
-                      <p className="text-lg leading-relaxed text-gray-600">
-                      &quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Praesent in nunc sit amet ligula vehicula varius. Id ad
-                        dolorum, rem itaque vero repudiandae, vel sed ipsam
-                        nesciunt quibusdam enim, dolores alias nihil eos.&quot;
-                      </p>
-                    </CardContent>
-                  </Card>
+    <div className="text-center space-y-10 py-10 bg-gray-50">
+      <h5 className="text-3xl font-bold text-gray-800 mb-8">Testimonials</h5>
+
+      <div className="overflow-hidden">
+        <div
+          className={`flex transition-transform duration-1000 ease-in-out transform`}
+          style={{
+            transform: `translateX(-${currentSlide * 100}%)`,
+          }}
+        >
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className="flex-none w-full md:w-1/2 flex items-center justify-center px-6"
+            >
+              <div className="flex items-center space-x-8">
+                <Image
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  width={100}
+                  height={100}
+                  className="w-36 h-36 rounded-full object-cover shadow-lg border-4 border-blue-500"
+                />
+                <div className="text-left">
+                  <h6 className="text-lg font-bold">{testimonial.name}</h6>
+                  <hr className="w-20 border-gray-300 my-2" />
+                  <blockquote className="text-gray-600 italic max-w-xs leading-relaxed">
+                    “{testimonial.quote}”
+                  </blockquote>
+                  <strong className="block text-gray-800 mt-2">- {testimonial.name}</strong>
                 </div>
               </div>
-            </CarouselItem>
+            </div>
           ))}
-        </CarouselContent>
-        <CarouselPrevious className="" />
-        <CarouselNext className="" />
-      </Carousel>
+        </div>
+      </div>
+
+      {/* Dots for navigation */}
+      <div className="flex justify-center mt-6 space-x-2">
+        {[0, 1, 2].map((dotIndex) => (
+          <GoDot
+            key={dotIndex}
+            size={30}
+            className={`cursor-pointer ${
+              currentSlide === dotIndex ? "text-blue-500" : "text-gray-400"
+            }`}
+            onClick={() => setCurrentSlide(dotIndex)}
+          />
+        ))}
+      </div>
     </div>
   );
 }

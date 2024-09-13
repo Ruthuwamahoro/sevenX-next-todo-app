@@ -12,7 +12,7 @@ export function ResizableDemo({
   bibleVerse: string
 }) {
   return (
-    <div className="border rounded-xl p-5 flex flex-col md:flex-row w-[700px] bg-slate-200">
+    <div data-aos="zoom-in" className="border rounded-xl p-5 flex flex-col md:flex-row w-[700px] bg-gray-50">
       <div className="flex flex-col items-center md:items-start md:w-1/3 p-4">
         <div className="relative w-32 h-32 mb-4">
           <Image
